@@ -1,0 +1,67 @@
+import React from 'react'
+import { createContext, useContext, useEffect, useState } from "react";
+const AuthContext = createContext()
+export const useAuth = () => useContext(AuthContext)
+
+export default function AuthProvider({children}) {
+   const [user,setUser] = useState(null)
+   const [isAuth,setAuth] = useState(null)
+   const [status,setStatus] = useState("checking")
+
+  useEffect(() => {
+    // const cargarEstadoAuth = async () => {
+      
+    // }
+
+    const register = async ({nombre,pssw,email,telefono}) =>{
+      try {
+        
+     
+      const response = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users")
+      const data = await response.json()
+
+      const existeUsuario = data.some(usuario => usuario.name === nombre)
+      const existeMail = data.some(usuario => usuario.mail === email)
+       const existeTelefono = data.some(usuario => usuario.number === telefono)
+      if(existeUsuario){
+        alert("Usuario ya registrado")
+      }else if(existeMail){
+        alert("Mail ya existente")
+      }else if(existeTelefono){
+        alert("Telefono ya existente")
+      } else{
+        const body = {
+          name : nombre, 
+          mail : email,
+          password : pssw,
+          number : telefono, //corregir number xq no tira numeros de telefono 
+        }
+
+        const respuesta = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users",{
+          method: "POST",
+          headers:{
+            'Content-Type':'application/json',
+            body : body
+          }
+        })
+      }
+
+      if(respuesta.ok){
+        alert("Registro exitoso")
+      }else{
+          alert("No se realizo el registro")
+      }
+ } catch (error) {
+        console.error(error)
+        alert('Error en la autenticacion')
+      }
+
+    }
+  }, [])
+
+  return (
+    <AuthContext.Provider value={{register}}>
+    
+    </AuthContext.Provider>
+  )
+}
