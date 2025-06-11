@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -15,15 +15,16 @@ export default function index() {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-
+  const [telefono,setTelefono] = useState(undefined)
   const [esLogin, setEsLogin] = useState(true);
 
 const handleSubmit = () => {
+  
         // if(esLogin){
         //     login(usuario, password)
         // }
         if(!esLogin){
-            register(usuario, email, password)
+            register(usuario,password, email, telefono)
         }
     }
 
@@ -46,6 +47,26 @@ const handleSubmit = () => {
         value={password}
         onChangeText={setPassword}
       />
+
+    {!esLogin && (
+      <>
+       <Text>Mail</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingresa tu mail"
+        value={email}
+        onChangeText={setEmail}
+      /> 
+      <Text>Telefono</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Ingresa tu telefono"
+        value={telefono}
+        onChangeText={setTelefono}
+      />
+      </>
+    )}
+      
       <View style={styles}>
         <Button title={esLogin ? "Login" : "Register"} onPress={handleSubmit} />
       </View>
