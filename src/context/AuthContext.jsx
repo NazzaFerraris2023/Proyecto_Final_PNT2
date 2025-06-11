@@ -1,16 +1,44 @@
+import { Link } from 'expo-router';
 import React from 'react'
 import { createContext, useContext, useEffect, useState } from "react";
 const AuthContext = createContext()
 export const useAuth = () => useContext(AuthContext)
 
 export default function AuthProvider({children}) {
-  //  const [user,setUser] = useState(null)
+    const [user,setUser] = useState(null)
   //  const [isAuth,setAuth] = useState(null)
-  //  const [status,setStatus] = useState("checking")
+    const [status,setStatus] = useState("checking")
 
-    const register = async ({nombre,pssw,email,telefono}) =>{
+    const login = async (usuario,pass) => {
       try {
+        const res = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users")
+        const data = await res.json()
 
+        const user = data.find(element => element.name === usuario && element.password === pass)
+
+        if(user) {
+          setUser(user)
+          setStatus("authenticated")
+        }else{
+           setStatus("unauthenticated")
+           alert("Usuario o contraseñas incorrectos")
+           throw "No se pudo autenticar"
+        }
+
+       
+
+      } catch (error) {
+        
+      }
+    }
+
+
+
+
+
+    const register = async (nombre,pssw,email,telefono) =>{
+      try {
+        console.log(nombre)
       const response = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users")
       const data = await response.json()
 

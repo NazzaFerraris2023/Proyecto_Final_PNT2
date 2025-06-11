@@ -31,6 +31,9 @@ const handleSubmit = () => {
 
   return (
     <View style={styles.container}>
+       <Link href={"./home.jsx"}>
+            <Button title="soy EL boton"></Button>
+        </Link>
       <Text style={styles.title}>{esLogin ? "Login" : "Register"}</Text>
       <Text>Usuario: </Text>
       <TextInput
@@ -78,6 +81,8 @@ const handleSubmit = () => {
         </Text>
         <Switch value={esLogin} onValueChange={setEsLogin} />
       </View>
+
+      
     </View>
   );
 }
