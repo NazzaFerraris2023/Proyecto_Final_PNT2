@@ -1,6 +1,8 @@
-import { Link } from 'expo-router';
+
 import React from 'react'
 import { createContext, useContext, useEffect, useState } from "react";
+
+
 const AuthContext = createContext()
 export const useAuth = () => useContext(AuthContext)
 
@@ -13,28 +15,38 @@ export default function AuthProvider({children}) {
       try {
         const res = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users")
         const data = await res.json()
-
-        const user = data.find(element => element.name === usuario && element.password === pass)
-
-        if(user) {
-          setUser(user)
+        const persona = data.find(element => element.name === usuario && element.password === pass)
+      //  console.log(persona)
+        if(persona) {
+          setUser(persona)
           setStatus("authenticated")
+          ///console.log(status)
+          // console.log(status)
+          
+         // RedirectToAction("home")
+
         }else{
            setStatus("unauthenticated")
            alert("Usuario o contraseñas incorrectos")
-           throw "No se pudo autenticar"
+          //  console.log(status)
+
+           //throw "No se pudo autenticar"
         }
 
        
+        
+
 
       } catch (error) {
-        
+        alert("Hubo un error de conexion")
+        console.log(error)
       }
+
+  
+
     }
 
-
-
-
+   
 
     const register = async (nombre,pssw,email,telefono) =>{
       try {
@@ -66,9 +78,12 @@ export default function AuthProvider({children}) {
           method: "POST",
           headers:{
             'Content-Type':'application/json',
-            body : body
           }
+          ,body : body
+      
         })
+
+            console.log(respuesta)
       
 
       if(respuesta.ok){
@@ -78,7 +93,7 @@ export default function AuthProvider({children}) {
       }
       }
  } catch (error) {
-        console.error(error)
+       //console.error(error)
         alert('Error en la autenticacion')
       }
 
@@ -90,7 +105,7 @@ export default function AuthProvider({children}) {
   // }, [])
 
   return (
-    <AuthContext.Provider value={{register}}>
+    <AuthContext.Provider value={{register,login}}>
       {children}
     </AuthContext.Provider>
   )

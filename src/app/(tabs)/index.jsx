@@ -11,7 +11,7 @@ import { Link } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 
 export default function index() {
-  const { register } = useAuth();
+  const { register,login } = useAuth();
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -20,9 +20,9 @@ export default function index() {
 
 const handleSubmit = () => {
   
-        // if(esLogin){
-        //     login(usuario, password)
-        // }
+        if(esLogin){
+            login(usuario, password)
+        }
         if(!esLogin){
             register(usuario,password, email, telefono)
         }
