@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import { Link } from "expo-router";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function index() {
   const { register,login } = useAuth();
@@ -19,7 +19,6 @@ export default function index() {
   const [esLogin, setEsLogin] = useState(true);
 
 const handleSubmit = () => {
-  
         if(esLogin){
             login(usuario, password)
         }
@@ -28,12 +27,8 @@ const handleSubmit = () => {
         }
     }
 
-
   return (
     <View style={styles.container}>
-       <Link href={"./home.jsx"}>
-            <Button title="soy EL boton"></Button>
-        </Link>
       <Text style={styles.title}>{esLogin ? "Login" : "Register"}</Text>
       <Text>Usuario: </Text>
       <TextInput
@@ -75,9 +70,11 @@ const handleSubmit = () => {
       </View>
       <View>
         <Text>
-          {esLogin
+          {
+            esLogin
             ? "No tienes cuenta? Registrate"
-            : "Ya tienes cuenta? logeate"}
+            : "Ya tienes cuenta? logeate"
+          }
         </Text>
         <Switch value={esLogin} onValueChange={setEsLogin} />
       </View>

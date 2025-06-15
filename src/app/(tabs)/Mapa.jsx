@@ -1,10 +1,10 @@
 import React from 'react'
 import { Text,View } from 'react-native'
 
-export default function Home() {
+export default function Mapa() {
   return (
     <View>
-      <Text></Text>
+      <Text>Estoy en el Mapa</Text>
     </View>
   )
 }

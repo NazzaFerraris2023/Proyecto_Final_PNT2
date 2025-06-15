@@ -5,23 +5,21 @@ import { Link } from "expo-router";
 
 const index = () => {
   return (
-
       <View style={styles.container}>
         <Text>Bienvenido a la plataforma</Text>
-        <Link href={"/(tabs)"} asChild>
+        <Link href={"/RegisterLogin"} asChild>
           <Button title="soy un boton"></Button>
         </Link>
       </View>
-
   );
-};
+}
 
 const styles = StyleSheet.create({
   container:{
     flex: 1,
     justifyContent: "center",
     padding:20
-  }
-})
+  } 
+});
 
 export default index;
