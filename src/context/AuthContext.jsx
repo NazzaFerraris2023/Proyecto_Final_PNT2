@@ -13,7 +13,7 @@ export default function AuthProvider({children}) {
 
     useEffect(() => {
       if(user != null){
-        router.replace('Home');
+        router.replace('home');
       }
     }, [user]);
 
@@ -69,13 +69,16 @@ export default function AuthProvider({children}) {
               },
               body: body
             });
+
+             setUser(JSON.parse(body));
+             setStatus('authenticated');
         }
 
-        setUser(body.json());
-        setStatus('authenticated');
+       
 
       } catch (error) {
         alert('Error en la autenticacion')
+        console.log(error)
       }
     }
 

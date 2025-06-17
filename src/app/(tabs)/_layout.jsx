@@ -7,7 +7,7 @@ export default function BottomBar(){
     return (
         <Tabs>
             <Tabs.Screen 
-                name="Home" 
+                name="home" 
                 options={
                     {
                         tabBarIcon:({focused, size}) => (
