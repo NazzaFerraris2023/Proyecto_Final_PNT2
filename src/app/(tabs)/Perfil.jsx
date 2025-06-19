@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Text,View } from 'react-native'
 
 export default function Perfil() {
@@ -8,8 +8,7 @@ export default function Perfil() {
     <View>
       <Text>Estoy en el Perfil</Text>
 
-      //Mostrar y editar info
-      //cerrar sesion 
+      
     </View>
   )
 }

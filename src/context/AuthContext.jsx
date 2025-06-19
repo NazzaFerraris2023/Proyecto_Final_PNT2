@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react'
 import { createContext, useContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const AuthContext = createContext();
@@ -8,11 +9,23 @@ export const useAuth = () => useContext(AuthContext);
 const router = useRouter();
 
 export default function AuthProvider({children}) {
-    const [user,setUser] = useState(null)
-    const [status,setStatus] = useState("checking")
+    const [user,setUser] = useState(null);
 
     useEffect(() => {
-      if(user != null){
+        async function checkIfUser(){
+          const usuarioGuardado = await AsyncStorage.getItem("user");
+          console.log(usuarioGuardado);
+          
+          if(usuarioGuardado) {
+            setUser(JSON.parse(usuarioGuardado));
+            router.replace('home');
+          }
+        }
+        checkIfUser()
+    }, []);
+
+    useEffect(() => {
+      if(user != null) {
         router.replace('home');
       }
     }, [user]);
@@ -25,10 +38,9 @@ export default function AuthProvider({children}) {
         const persona = data.find(element => element.name === usuario && element.password === pass);
 
         if(persona) {
+          await AsyncStorage.setItem("user", JSON.stringify(persona));
           setUser(persona);
-          setStatus("authenticated");
         }else{
-           setStatus("unauthenticated");
            alert("Usuario o contraseñas incorrectos");
         }
 
@@ -71,10 +83,7 @@ export default function AuthProvider({children}) {
             });
 
              setUser(JSON.parse(body));
-             setStatus('authenticated');
         }
-
-       
 
       } catch (error) {
         alert('Error en la autenticacion')
@@ -83,7 +92,7 @@ export default function AuthProvider({children}) {
     }
 
     return (
-      <AuthContext.Provider value={{register,login}}>
+      <AuthContext.Provider value={{register,login, user}}>
         {children}
       </AuthContext.Provider>
     )
