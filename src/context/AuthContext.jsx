@@ -18,7 +18,6 @@ export default function AuthProvider({children}) {
           
           if(usuarioGuardado) {
             setUser(JSON.parse(usuarioGuardado));
-            router.replace('home');
           }
         }
         checkIfUser()
@@ -82,7 +81,8 @@ export default function AuthProvider({children}) {
               body: body
             });
 
-             setUser(JSON.parse(body));
+            await AsyncStorage.setItem("user", JSON.stringify(body));
+            setUser(JSON.parse(body));
         }
 
       } catch (error) {
