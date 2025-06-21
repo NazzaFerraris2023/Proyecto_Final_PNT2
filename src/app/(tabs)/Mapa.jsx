@@ -39,11 +39,7 @@ function decodePolyline(t, e) {
     return points;
   }
 
-
-
-
-
-const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
+const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
 
   export default function Mapa() {
   const [location, setLocation] = useState(null)
@@ -58,13 +54,13 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
 
   const mapRef = useRef(null)
 
-  const fadeAnim = useRef(new Animated.Value(0).current)
+  const fadeAnim = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
     const cargarLocation  = async () => {
-      let {status} = await Location.requestForegroundPermissionsAsync()
+      let {status} = await Location.requestForegroundPermissionsAsync();
 
-      if(status != 'granted'){
+      if(status !== 'granted'){
         setErrorMsg('NO se permite la ubicacion')
         return;
       }
@@ -112,9 +108,9 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
 
     const centrarUser = () => {
       if(mapRef.current && location){
-        mapRef.current.AnimateToRegion({
-        latitude : locacion.coords.latitude,
-        longitude : locacion.coords.longitude,
+        mapRef.current.animateToRegion({
+        latitude : locacion.latitude,
+        longitude : locacion.longitude,
         latitudeDelta : 0.05,
         longitudeDelta : 0.05,
         })
@@ -127,16 +123,17 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
       setRouteCoords(null);
 
 
-      const originStr=  `${location.latitude},${location.longitude}`
-      const destStr = `${destino.latitude},${destino.longitude}`
-      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originStr}&destination=${destStr}&mode=walking&key=${GOOGLE_MAPS_APIKEY}`;
-        
+      const originStr = `${location.latitude},${location.longitude}`
+        const destStr = `${destino.latitude},${destino.longitude}`
 
+     const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originStr}&destination=${destStr}&mode=walking&key=${GOOGLE_MAPS_APIKEY}`;
+        
+        
       try{
         const resp = await fetch(url);
         const data = await resp.json();
-        if(data.routes && data.routes.lenght){
-          const point = decodePolyline(data.routes[0].overview_polyline.points) 
+        if(data.routes && data.routes.length){
+          const point = decodePolyline(data.routes[0].overview_polyline.points)
           setRouteCoords(point)
         }
 
@@ -152,7 +149,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
 
 
     const abrirVeterinaria = (veterinaria) =>{
-      selectedRoute(veterinaria)
+      setSelectedRoute(veterinaria)
       setModalVisible(true)
 
     }
@@ -174,46 +171,50 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
     return (
       <View style = {styles.container}>
         {location && (
-          <MapView mapType='standard' showsMyLocationButton={false} style={styles.map} 
-        ref={map.ref} initialRegion={{
-          latitude: location.latitude,
-          longitude : location.longitude,
-          latitudeDelta : 0.05,
-          longitudeDelta : 0.05
-        }}
-        showsUserLocation
-        showsCompass              
-        onRegionChangeComplete={setMapRegion}
+          <MapView mapType='standard'
+           showsMyLocationButton={false} 
+           style={styles.map} 
+            ref={map.ref} initialRegion={{
+              latitude: location.latitude,
+              longitude : location.longitude,
+              latitudeDelta : 0.05,
+              longitudeDelta : 0.05
+            }}
+          showsUserLocation
+          showsCompass              
+          onRegionChangeComplete={setMapRegion}
           >
-            {
+          {
           veterinarias.map((veterinaria) => (
                 <Marker
             key={veterinaria.id}
             coordinate={veterinaria.coordenadas}
             onPress = {() => abrirVeterinaria(veterinaria)}
-            image={'../../assets/icon.png'}
+            image={require('../../../assets/juanfer.png')}
 
-                    />
-                  ))
-            }
-
-
-            routeCoords && (
+               />
+            ))
+          }
+          {
+              routeCoords && (
               <Polyline
               coordinates= {routeCoords}
               strokeColor= '#0077AFF'
               stokeWidht={5}
               />
             )
-            </MapView>
+          }
+          
+        </MapView>
 
         )}
 
-       <Pressable style={styles.centerButton} onPress={centrarUser}>
-        <Image source={requiere('../../assets/icon.png')}/>
+        <Pressable style={styles.centerButton} onPress={centrarUser}>
+        <Image source={require('../../../assets/juanfer.png')}/>
         </Pressable> 
-         <Pressable style={styles.alingButton} onPress={alingNorth}>
-        <Image source={requiere('../../assets/icon.png')}/>
+         
+        <Pressable style={styles.alignButton} onPress={alingNorth}>
+        <Image source={require('../../../assets/juanfer.png')}/>
         </Pressable>
         
 
@@ -226,7 +227,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
         <View style={styles.modalCard}>
           <View style={styles.modalHeader}>
             <Image
-            source={requiere('../../assets/favicon.png')}
+            source={require('../../../assets/juanfer.png')}
             style={styles.modalIcon}
             />
             <View>
@@ -238,13 +239,13 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
           <View style={{marginVertical:10}}>
             <Pressable 
             syle={styles.modalButton}
-            onPress={() => fetchRoute(selectedRoute.coordinate)}
+            onPress={() => fetchRoute(selectedRoute.coordenadas)}
             disabled={loadingRoute}
             >
               {loadingRoute? (
-                <ActivityIndicator color={"#fff"}></ActivityIndicator>
+                <ActivityIndicator color={"#fff"}/>
               ):(
-                <Text style={styles.modalButtonText}></Text>
+                <Text style={styles.modalButtonText}>Ruta</Text>
               )}
             </Pressable>
 
@@ -258,10 +259,6 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU'
         </Animated.View>
          
         </Modal>
-
-
-
-
       </View>
     )
   }
