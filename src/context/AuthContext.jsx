@@ -3,34 +3,40 @@ import React, { useEffect } from 'react'
 import { createContext, useContext, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 const router = useRouter();
 
 export default function AuthProvider({children}) {
     const [user,setUser] = useState(null);
+    const [isLoadingUser,setIsLoadingUser] = useState(true);
 
     useEffect(() => {
-        async function checkIfUser(){
-          const usuarioGuardado = await AsyncStorage.getItem("user");
-          console.log(usuarioGuardado);
-          
-          if(usuarioGuardado) {
-            setUser(JSON.parse(usuarioGuardado));
-            router.replace('home');
-          }
-        }
-        checkIfUser()
+      checkIfUser();
     }, []);
-
+    
     useEffect(() => {
-      if(user != null) {
+      if(isLoadingUser) return;
+
+      if(user !== null) {
         router.replace('home');
+      } else {
+        router.replace('RegisterLogin');
       }
     }, [user]);
-
-
+      
+    const checkIfUser = async () => {
+      const usuarioGuardado = await AsyncStorage.getItem("user");
+      if(usuarioGuardado !== null) {
+        setUser(JSON.parse(usuarioGuardado));
+      }
+      setIsLoadingUser(false);
+    }
+    
+    const closeSession = () => {
+      setUser(null);
+    }
+      
     const login = async (usuario,pass) => {
       try {
         const res = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users")
@@ -82,7 +88,9 @@ export default function AuthProvider({children}) {
               body: body
             });
 
-             setUser(JSON.parse(body));
+            await AsyncStorage.setItem("user", JSON.stringify(body));
+            setUser(body);
+
         }
 
       } catch (error) {
@@ -92,7 +100,7 @@ export default function AuthProvider({children}) {
     }
 
     return (
-      <AuthContext.Provider value={{register,login, user}}>
+      <AuthContext.Provider value={{register, login, checkIfUser, closeSession}}>
         {children}
       </AuthContext.Provider>
     )
