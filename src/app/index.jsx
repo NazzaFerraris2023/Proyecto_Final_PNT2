@@ -16,8 +16,8 @@ const index = () => {
       <View style={styles.container}>
         <Text>Bienvenido a la plataforma</Text>
         <Link href={"/RegisterLogin"} asChild>
-        </Link>
         <Button title="soy un boton"></Button>
+        </Link>
       </View>
   );
 }

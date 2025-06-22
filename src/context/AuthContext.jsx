@@ -28,12 +28,14 @@ export default function AuthProvider({children}) {
     const checkIfUser = async () => {
       const usuarioGuardado = await AsyncStorage.getItem("user");
       if(usuarioGuardado !== null) {
-        setUser(JSON.parse(usuarioGuardado));
+        const usuario = JSON.parse(usuarioGuardado);
+        setUser(usuario);
       }
       setIsLoadingUser(false);
     }
     
-    const closeSession = () => {
+    const closeSession = async () => {
+      await AsyncStorage.removeItem("user");
       setUser(null);
     }
       
@@ -80,7 +82,7 @@ export default function AuthProvider({children}) {
               password : pssw,
               number : telefono, //corregir number xq no tira numeros de telefono 
             });
-            const respuesta = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users",{
+            const res = await fetch("https://684372c771eb5d1be030d94d.mockapi.io/users",{
               method: "POST",
               headers:{
                 'Content-Type':'application/json',
@@ -88,7 +90,8 @@ export default function AuthProvider({children}) {
               body: body
             });
 
-            await AsyncStorage.setItem("user", JSON.stringify(body));
+            const createduser = await res.json();
+            await AsyncStorage.setItem("user", JSON.stringify(createduser));
             setUser(body);
 
         }
