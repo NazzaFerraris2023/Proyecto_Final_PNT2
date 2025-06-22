@@ -25,7 +25,8 @@ function Mascotas() {
   const [idEditando, setIdEditando] = useState(null);
 
   const opcionesSalud = ["SANO", "ENFERMO", "VACUNADO", "NO VACUNADO"];
-
+//Agregar campos: especie,dueño
+//Agregar que cuando se agregue la mascota se cierre el formulario
   const agregarMascota = async () => {
     try {
       const response = await fetch(
@@ -36,6 +37,7 @@ function Mascotas() {
       //Valido si existe la mascota
       const existeMascota = data.some((m) => m.nombre === mascota.nombre);
 
+      //validar campos vacios
       if (existeMascota) {
         alert("La mascota ya esta creada");
       } else {
@@ -257,7 +259,7 @@ function Mascotas() {
       </View>
     </ScrollView>
   );
-}
+} //
 const styles = StyleSheet.create({
   contenedorMap: {
     flexDirection: "row",
@@ -279,11 +281,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#fff",
     borderRadius: 10,
-    overflow: "hidden", // <-- evita desbordes
+    overflow: "hidden", // <-- evita desbordes 
   },
   img: {
-    width: 105,
-    height: 105,
+    width: 105, 
+    height: 105, 
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: "#eee",
