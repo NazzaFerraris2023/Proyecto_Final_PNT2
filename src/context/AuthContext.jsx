@@ -93,7 +93,6 @@ export default function AuthProvider({children}) {
             const createduser = await res.json();
             await AsyncStorage.setItem("user", JSON.stringify(createduser));
             setUser(body);
-
         }
 
       } catch (error) {
