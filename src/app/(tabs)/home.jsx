@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text,View } from 'react-native'
-import Turno from '../components/Turno';
-
+import Turnos from '../components/Turnos';
+import ProximoTurno from '../components/ProximoTurno';
 
 export default function Home() {
   return (
@@ -9,7 +9,8 @@ export default function Home() {
       <Text>
         estoy en el home
       </Text>
-            <Turno/> 
+            <ProximoTurno/> 
+            <Turnos/> 
 
     </View>
   )

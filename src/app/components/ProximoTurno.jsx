@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text ,StyleSheet } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 
-export default function Turno() {
+export default function ProximoTurno() {
   const {user} =  useAuth();
 
   //estado turno
@@ -37,7 +37,6 @@ export default function Turno() {
   //conseguir date mas chico, 
   const proximoTurno = () => {
 
-    //
     const turnosUsuario = turnos.filter((turno) => turno.name == user?.name);
 
     if (turnosUsuario.length === 0) {
@@ -79,7 +78,7 @@ export default function Turno() {
 }
 
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     margin: 16,
     padding: 16,
