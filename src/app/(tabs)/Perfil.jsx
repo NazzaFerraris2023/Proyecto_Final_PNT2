@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View, StyleSheet, Image, TextInput} from 'react
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
+import { useFocusEffect } from 'expo-router';
 
 
 export default function Perfil() {
@@ -17,6 +18,11 @@ export default function Perfil() {
     initUserInfo();
   }, []);
       
+  useFocusEffect(
+    React.useCallback(() => {
+      getCantidadMascotas();
+    }, [])
+  );//actualiza la cantidad de mascotas todas las veces que se vuelve al perfil
   const initUserInfo = async () => {
     const userInfo = await getUserInfo();
     setName(userInfo.name);
@@ -34,9 +40,11 @@ export default function Perfil() {
   }
 
   const getCantidadMascotas = async () => {
+    const user = await getUserInfo()
     const mascotasJson = await fetch('https://685208d68612b47a2c0be5cb.mockapi.io/Mascotas');
     const mascotasObj = await mascotasJson.json();
-    setCantMascotas(mascotasObj.length);
+    const mascotasDuenio = await mascotasObj.filter((m) => m.duenio === user.name)
+    setCantMascotas(mascotasDuenio.length);
   }
 
   const takePic = async () => {
