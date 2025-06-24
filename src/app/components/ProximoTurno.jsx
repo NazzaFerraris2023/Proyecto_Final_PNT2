@@ -1,38 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text ,StyleSheet } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text ,StyleSheet, } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import { useFocusEffect } from 'expo-router';
 
 export default function ProximoTurno() {
   const {user} =  useAuth();
-
-  //estado turno
-  //array de turnos
   const [turno, setTurno] = useState({
     fechaTurno: 0,
     especialidad: "",
     nombreMascota: "",
     name: "",
-  })
-  
-  //estado de array turnos
-  const [turnos, setTurnos] = useState([])
+  });
+  const [turnos, setTurnos] = useState([]);
+
+  const fetchTurnos = async () => {
+    try {
+      const response = await fetch("https://6856aaae1789e182b37eb8a7.mockapi.io/turno");
+      const data = await response.json();
+      setTurnos(data);
+    } catch (error) {
+      alert("salio un error " + error);
+    }
+  };
 
   useEffect(() => {
-    const fetchTurnos = async() => {
-      try{
-        const response = await fetch ("https://6856aaae1789e182b37eb8a7.mockapi.io/turno")
-        const data = await response.json()
-        
-        setTurnos(data)
-      }
-      catch (error) {
-        alert("salio un error " + error)
-      }
-    }
+    fetchTurnos();
+  }, []);
 
-    fetchTurnos()
-   
-  } ,[])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchTurnos();
+    }, [])
+  );
 
   //conseguir date mas chico, 
   const proximoTurno = () => {
@@ -47,9 +46,9 @@ export default function ProximoTurno() {
     }
 
     const fechaCercana = turnosFuturos.reduce((previous, current) => {
-      return current.fechaTurno < previous.fechaTurno ? current : previous
+      return new Date(current.fechaTurno) < new Date(previous.fechaTurno) ? current : previous;
     });
-    return fechaCercana
+    return fechaCercana;
   }
 
 
@@ -59,7 +58,6 @@ export default function ProximoTurno() {
       console.log('turno proximo: ', proximoTurno());
     }
   }, [turnos, user]);
-
 
   const turnoProximo = proximoTurno();
 
