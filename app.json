@@ -14,7 +14,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "La app necesita acceso a tus fotos para elegir una imagen de perfil",
+        "NSCameraUsageDescription": "La app necesita acceso a la cámara para sacar una foto",
+        "NSMicrophoneUsageDescription": "La app necesita acceso al micrófono para grabar videos"
+      }
     },
     "android": {
       "adaptiveIcon": {
