@@ -8,8 +8,15 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 export default function Turnos() {
   const { turnos, agregarTurno, eliminarTurno, editarTurno } = useTurnos();
   const { user } = useAuth();
-    if (!user) return <Text>Cargando usuario...</Text>;
-  const [form, setForm] = useState({ fechaTurno: '', especialidad: '', nombreMascota: '', id: '' });
+    if (!user) return <Text>Cargando usuario</Text>;
+    
+  const [form, setForm] = useState({ 
+    fechaTurno: '', 
+    especialidad: '', 
+    nombreMascota: '', 
+    id: '' 
+  });
+
   const [editando, setEditando] = useState(false);
   
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -22,14 +29,31 @@ export default function Turnos() {
   function formatearFecha(fecha) {
   if (!fecha) return '';
   const d = new Date(fecha);
-  if (isNaN(d)) return fecha; // Si no es una fecha válida, muestra el texto original
-  return d.toLocaleDateString(); // O usa 'es-AR' si prefieres: d.toLocaleDateString('es-AR')
+  if (isNaN(d)) return fecha; // Si no es una fecha valida muestra el texto original
+  return d.toLocaleDateString(); 
   }
 
 
   const handleGuardar = () => {
+
+    const fechaHoy = new Date ()
+    const fechaTurno = new Date (form.fechaTurno)
+
+      if (
+    !form.fechaTurno ||
+    !form.especialidad.trim() ||
+    !form.nombreMascota.trim()
+    ) {
+    alert('Hay que completar todos los campos');
+    return;
+    } 
+
+    if (fechaTurno < fechaHoy) {
+      alert ('Los turnos deben tener fechas futuras')
+      return;
+    }
     if (editando) {
-      editarTurno(form);
+      editarTurno(form.id, form);
       setEditando(false);
     } else {
       agregarTurno({ ...form, name: user?.name });
@@ -50,7 +74,7 @@ export default function Turnos() {
   const onChangeDate = (event, selectedDate) => {
     setShowDatePicker (false);
     if (selectedDate) {
-      setForm ({ ...form, fechaTurno: selectedDate.Date.toISOString()})
+      setForm ({ ...form, fechaTurno: selectedDate.toISOString()})
     }
   }
 
