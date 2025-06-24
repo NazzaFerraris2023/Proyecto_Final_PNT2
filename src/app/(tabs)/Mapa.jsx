@@ -43,7 +43,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
 
   export default function Mapa() {
   const [location, setLocation] = useState(null)
-  const [loadingRoute, setLoadingRout] = useState(null)
+  const [loadingRoute, setLoadingRoute] = useState(null)
   const [selectedRoute, setSelectedRoute] =useState(null)
   const [routeCoords, setRouteCoords] = useState(null)
   const [mapRegion, setMapRegion] = useState(null)
@@ -82,23 +82,23 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
 
     useEffect(() =>{
       if(modalVisible){
-        Animated.timing(fadeAnim,{
+         Animated.timing(fadeAnim,{
           toValue: 1,
-          duration: 250,
+          duration: 230,
           useNativeDriver: true,
-          easing: Easing.out(Easing.ease)
-        }).start()
-      }
+          easing: Easing.out(Easing.ease),
+            }).start()
+        }
     },[modalVisible])
 
    const alingNorth = () => {
     if(mapRef.current && mapRegion){
       mapRef.current.animateCamera({
-        heading:0,
-        pitch:0,
+        heading: 0,
+        pitch: 0,
         center:{
           latitude: mapRegion.latitude,
-          longitude: mapRegion.longitude
+          longitude: mapRegion.longitude,
         }
       })
     }
@@ -109,43 +109,42 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
     const centrarUser = () => {
       if(mapRef.current && location){
         mapRef.current.animateToRegion({
-        latitude : locacion.latitude,
-        longitude : locacion.longitude,
+        latitude : location.latitude,
+        longitude : location.longitude,
         latitudeDelta : 0.05,
         longitudeDelta : 0.05,
         })
       }
     }
 
-    const fetchRoute = async (destino) => {
-      if(!location) return;
-      setLoadingRout(true);
-      setRouteCoords(null);
+     const fetchRoute = async (destino) => {
+        console.log("destino: ", destino);
+        if(!location) return;
+        setLoadingRoute(true)
+        setRouteCoords(null);
 
-
-      const originStr = `${location.latitude},${location.longitude}`
+        const originStr = `${location.latitude},${location.longitude}`
         const destStr = `${destino.latitude},${destino.longitude}`
 
-     const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originStr}&destination=${destStr}&mode=walking&key=${GOOGLE_MAPS_APIKEY}`;
+        const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originStr}&destination=${destStr}&mode=walking&key=${GOOGLE_MAPS_APIKEY}`;
         
-        
-      try{
-        const resp = await fetch(url);
-        const data = await resp.json();
-        if(data.routes && data.routes.length){
-          const point = decodePolyline(data.routes[0].overview_polyline.points)
-          setRouteCoords(point)
+        try {
+            const resp = await fetch(url)
+            const data = await resp.json();
+            if(data.routes && data.routes.length){
+               const points =  decodePolyline(data.routes[0].overview_polyline.points)
+               console.log("decodePolyline: ", points);
+               setRouteCoords(points)
+            }
+            
+        } catch (error) {
+            setErrorMsg('Error al trazar la ruta')
         }
-
-
-      }catch(error){
-        setErrorMsg('Fallo en el trazado de ruta')
-      }
-      setLoadingRout(false);
-      setSelectedRoute(false)
-      setModalVisible(false)
-
+        setLoadingRoute(false)
+        setSelectedRoute(false)
+        setModalVisible(false)
     }
+
 
 
     const abrirVeterinaria = (veterinaria) =>{
@@ -154,11 +153,11 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
 
     }
     const handleClose = () =>{
-      Animated.timing(fadeAnim,{
-          toValue: 0,
-          duration: 150,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease)
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 120,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.ease),
         }).start(() => {
           setModalVisible(false)
           setSelectedRoute(null)
@@ -174,7 +173,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
           <MapView mapType='standard'
            showsMyLocationButton={false} 
            style={styles.map} 
-            ref={map.ref} initialRegion={{
+            ref={mapRef} initialRegion={{
               latitude: location.latitude,
               longitude : location.longitude,
               latitudeDelta : 0.05,
@@ -190,7 +189,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
             key={veterinaria.id}
             coordinate={veterinaria.coordenadas}
             onPress = {() => abrirVeterinaria(veterinaria)}
-            image={require('../../../assets/juanfer.png')}
+            image={require('../../../assets/veterinaria.png')}
 
                />
             ))
@@ -210,11 +209,15 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
         )}
 
         <Pressable style={styles.centerButton} onPress={centrarUser}>
-        <Image source={require('../../../assets/juanfer.png')}/>
+        <Image source={require('../../../assets/a.png')}
+         style={{width: 32, height: 32}}
+        resizeMode='contain'/>
         </Pressable> 
          
         <Pressable style={styles.alignButton} onPress={alingNorth}>
-        <Image source={require('../../../assets/juanfer.png')}/>
+        <Image source={require('../../../assets/icon.png')}
+         style={{width: 32, height: 32}}
+        resizeMode='contain'/>
         </Pressable>
         
 
@@ -222,12 +225,12 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
         <Modal  visible= {modalVisible}
         animationType='fade'
         transparent
-        onRequestClose={() => setSelectedRoute(null)}> 
+        onRequestClose={() => setSelectedSede(null)}> 
         <Animated.View style={[styles.modalOverlay, {opacity: fadeAnim}]}>
         <View style={styles.modalCard}>
           <View style={styles.modalHeader}>
             <Image
-            source={require('../../../assets/juanfer.png')}
+            source={require('../../../assets/veterinaria.png')}
             style={styles.modalIcon}
             />
             <View>
@@ -238,15 +241,16 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
 
           <View style={{marginVertical:10}}>
             <Pressable 
-            syle={styles.modalButton}
-            onPress={() => fetchRoute(selectedRoute.coordenadas)}
-            disabled={loadingRoute}
-            >
-              {loadingRoute? (
-                <ActivityIndicator color={"#fff"}/>
-              ):(
-                <Text style={styles.modalButtonText}>Ruta</Text>
-              )}
+          style={styles.modalButton}
+          onPress={() => fetchRoute(selectedRoute.coordenadas)}
+          disabled={loadingRoute}
+      >
+          {loadingRoute ? (
+              <ActivityIndicator color={"#fff"} />
+          ): (
+                  <Text style={styles.modalButtonText}>Ver Ruta</Text>
+              )
+          }
             </Pressable>
 
           </View>
@@ -256,6 +260,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
           </Pressable>
 
         </View>
+
         </Animated.View>
          
         </Modal>
