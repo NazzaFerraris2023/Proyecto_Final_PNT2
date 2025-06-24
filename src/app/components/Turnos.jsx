@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTurnos } from '../../context/TurnosContext';
 import { useAuth } from '../../context/AuthContext';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 export default function Turnos() {
@@ -11,20 +12,33 @@ export default function Turnos() {
   const [form, setForm] = useState({ fechaTurno: '', especialidad: '', nombreMascota: '', id: '' });
   const [editando, setEditando] = useState(false);
   
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
 
-
-//   // Solo los turnos del usuario actual
   const turnosUsuario = turnos.filter(turno => turno.name === user?.name);
+
+
+//aca va formatear fecha
+  function formatearFecha(fecha) {
+  if (!fecha) return '';
+  const d = new Date(fecha);
+  if (isNaN(d)) return fecha; // Si no es una fecha válida, muestra el texto original
+  return d.toLocaleDateString(); // O usa 'es-AR' si prefieres: d.toLocaleDateString('es-AR')
+  }
+
 
   const handleGuardar = () => {
     if (editando) {
-      editarTurno(form.id, form);
+      editarTurno(form);
       setEditando(false);
     } else {
-      agregarTurno({ ...form, id: Date.now().toString(), name: user?.name });
+      agregarTurno({ ...form, name: user?.name });
     }
-    setForm({ fechaTurno: '', especialidad: '', nombreMascota: '', id: '' });
+    setForm({ 
+      fechaTurno: '',
+      especialidad: '',
+      nombreMascota: '',
+    });
   };
 
   const handleEditar = (turno) => {
@@ -32,16 +46,38 @@ export default function Turnos() {
     setEditando(true);
   };
 
+  //despues del cambio de fecha
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker (false);
+    if (selectedDate) {
+      setForm ({ ...form, fechaTurno: selectedDate.Date.toISOString()})
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{editando ? 'Editar Turno' : 'Nuevo Turno'}</Text>
-      <TextInput
+      <TouchableOpacity
         style={styles.input}
-        placeholder="Fecha"
-        value={form.fechaTurno}
-        onChangeText={text => setForm({ ...form, fechaTurno: text })}
-        keyboardType="numeric"
-      />
+        onPress={() => setShowDatePicker(true)}
+      >
+        <Text>
+          {form.fechaTurno ? formatearFecha(form.fechaTurno) : 'Seleccionar Fecha'}
+        </Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={form.fechaTurno ? new Date(form.fechaTurno) : new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+            if (selectedDate) {
+              setForm({ ...form, fechaTurno: selectedDate.toISOString() });
+            }
+          }}
+        />
+      )}
       <TextInput
         style={styles.input}
         placeholder="Especialidad"
@@ -62,7 +98,7 @@ export default function Turnos() {
         renderItem={({ item }) => (
           <View style={styles.turnoItem}>
             <Text>
-              {new Date(Number(item.fechaTurno)).toLocaleDateString()} - {item.especialidad} - {item.nombreMascota}
+              {formatearFecha(item.fechaTurno)} - {item.especialidad} - {item.nombreMascota}
             </Text>
             <View style={{ flexDirection: 'row' }}>
               <TouchableOpacity onPress={() => handleEditar(item)}>

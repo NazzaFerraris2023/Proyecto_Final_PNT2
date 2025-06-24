@@ -6,9 +6,7 @@ import ProximoTurno from '../components/ProximoTurno';
 export default function Home() {
   return (
     <View>
-      <Text>
-        estoy en el home
-      </Text>
+
             <ProximoTurno/> 
             <Turnos/> 
 

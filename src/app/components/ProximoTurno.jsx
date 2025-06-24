@@ -39,11 +39,14 @@ export default function ProximoTurno() {
 
     const turnosUsuario = turnos.filter((turno) => turno.name == user?.name);
 
-    if (turnosUsuario.length === 0) {
+    const fechaHoy = Date.now();
+    const turnosFuturos = turnosUsuario.filter(turno => new Date(turno.fechaTurno) >= fechaHoy)
+
+    if (turnosFuturos.length === 0) {
       return null;
     }
 
-    const fechaCercana = turnosUsuario.reduce((previous, current) => {
+    const fechaCercana = turnosFuturos.reduce((previous, current) => {
       return current.fechaTurno < previous.fechaTurno ? current : previous
     });
     return fechaCercana
@@ -65,10 +68,10 @@ export default function ProximoTurno() {
     <View style ={styles.container}>
       {user && turnoProximo ? (
         <Text style = {styles.turno}>
-          Próximo turno: {new Date(Number(turnoProximo.fechaTurno)).toLocaleDateString()} - {turnoProximo.especialidad} - {turnoProximo.nombreMascota}
+          Próximo turno: {new Date(turnoProximo.fechaTurno).toLocaleDateString()} - {turnoProximo.especialidad} - {turnoProximo.nombreMascota}
         </Text>
       ) : user && !turnoProximo ? (
-        <Text style = {styles.noTurno}>No tenés turnos asignados.</Text>
+        <Text style = {styles.sinTurno}>No tenés turnos proximos</Text>
       ) : null}
     </View>
   );
@@ -92,8 +95,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  noTurno: {
-    fontSize: 18,
+  sinTurno: {
+    fontSize: 20,
     color: '#b71c1c',
     fontWeight: 'bold',
     textAlign: 'center',
