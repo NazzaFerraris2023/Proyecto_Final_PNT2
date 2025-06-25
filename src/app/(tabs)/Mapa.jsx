@@ -10,8 +10,43 @@
       id:'1',
       title: 'Veterinaria',
       description: 'Vete belgrano',
-      coordenadas: {latitude: -34.5859, longitude: -58.4186}
+      coordenadas: {latitude: -38.5859, longitude: -38.4186}
+    },
+    {
+      id:'2',
+      title: 'Veterinaria 2',
+      description: '9 a 14:30 hs',
+      coordenadas :{latitude: -34.668574, longitude:-58.496986}
     }
+
+                              
+// -58	388311,-34	626081;MOVIL;2018-08-10;8:15 a 14:30 hs ;Pavon y Virrey Cevallos;Plaza Garay;Constitución;1;Atenciones clínicas y turnos de castración
+// -58	406886;-34	625913;MOVIL;2018-08-10;8:15 a 14:30 hs ;La Rioja y Cochabamba  ;Plaza Martin Fierro;San Cristobal;3;Atenciones clínicas y turnos de castración
+// -58	474991;-34	645153;MOVIL;2018-08-10;8:15 a 14:30 hs ;Fco. Bilbao y Lacarra  ;Parque Avellaneda;Parque Avellaneda;9;Atenciones clínicas y turnos de castración
+// -58	492992;-34	605509;MOVIL;2018-08-11;10:30 a 17:30 hs;Cuenca 2500;Plaza Aristobulo del Valle;Villa del Parque;11;Atenciones clínicas y turnos de castración                                                         
+// -58	419934;-34	592039;MOVIL;2018-08-11;10:30 a 17:30 hs;Costa Rica 3500 ;Plaza Unidad Latinoamericana ;Palermo;14;Atenciones clínicas y turnos de castración                                                         
+// -58	492992;-34	605509;MOVIL;2018-08-12;10:30 a 17:30 hs;Cuenca 2500;Plaza Aristobulo del Valle ;Villa del Parque;11;Atenciones clínicas y turnos de castración                                                         
+// -58	419934;-34	592039;MOVIL;2018-08-12;10:30 a 17:30 hs;Costa Rica 3500;Plaza Unidad Latinoamericana ;Palermo;14;Atenciones clínicas y turnos de castración                                                         
+// -58	397291;-34	588025;MOVIL;2018-08-17;8:15 a 14:30 hs;Av. Las Heras y Av. Pueyrredon    ;Plaza Tte. Gral. Emilio Mitre;Recoleta;2;Atenciones clínicas y turnos de castración
+// -58	456678;-34	621817;MOVIL;2018-08-17;8:15 a 14:30 hs;Av. Avellaneda y Donato Alvarez;Plaza Angel Gris;Flores;7;Atenciones clínicas y turnos de castración
+// -58	479826;-34	550748;MOVIL;2018-08-17;8:15 a 14:30 hs;García del Río y Melian;Parque Saavedra;Saavedra;12;Atenciones clínicas y turnos de castración
+// -58	475098;-34	688271;MOVIL;2018-08-18;10:30 a 17:30 hs ;Av. Fernandez de la Cruz y Guamaní               ;Plaza Sudamericana ;Villa Riachuelo;8;Atenciones clínicas y turnos de castración                                                         
+// -58	445468;-34	604649;MOVIL;2018-08-18;10:30 a 17:30 hs ;Olaya y Antesana;Plaza Benito Nazar ;Villa Crespo;15;Atenciones clínicas y turnos de castración                                                         
+// -58	475098;-34	688271;MOVIL;2018-08-19;10:30 a 17:30 hs ;Av. Fernandez de la Cruz y Guamaní;Plaza Sudamericana ;Villa Riachuelo;8;Atenciones clínicas y turnos de castración                                                         
+// -58	445468;-34	604649;MOVIL;2018-08-19;10:30 a 17:30 hs ;Olaya y Antesana;Plaza Benito Nazar;Villa Crespo;15;Atenciones clínicas y turnos de castración                                                         
+// -58	369577;-34	626455;MOVIL;2018-08-20;10:30 a 17:30 hs ;Defensa y Brasil;Parque Lezama;San Telmo;1;Atenciones clínicas y desparasitaciones 
+// -58	407732;-34	625827;MOVIL;2018-08-20;10:30 a 17:30 hs ;La Rioja y Cochabamba;Plaza Martin Fierro;San Cristobal;3;Atenciones clínicas y desparasitaciones 
+// -58	506506;-34	6554;MOVIL;2018-08-20;10:30 a 17:30 hs ;Av. Juan B. Alberti y Cafayate;Plaza Salaberry;Mataderos;9;Atenciones clínicas y desparasitaciones 
+// -58	487768;-34	559583;MOVIL;2018-08-20;10:30 a 17:30 hs ;Crisólogo Larralde e/ Machain y Mariano Acha;Plaza Alberdi;Saavedra;12;Atenciones clínicas y desparasitaciones 
+
+
+
+
+
+
+
+
+
 
   ]
 function decodePolyline(t, e) {
@@ -39,13 +74,13 @@ function decodePolyline(t, e) {
     return points;
   }
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
+const GEO_API_KEY = '490f91cd29304c21bc363c0e5896385e';
 
   export default function Mapa() {
   const [location, setLocation] = useState(null)
   const [loadingRoute, setLoadingRoute] = useState(null)
   const [selectedRoute, setSelectedRoute] =useState(null)
-  const [routeCoords, setRouteCoords] = useState(null)
+  const [vets, setVets] = useState([])
   const [mapRegion, setMapRegion] = useState(null)
   const [modalVisible, setModalVisible] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
@@ -116,29 +151,34 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
         })
       }
     }
+       useEffect(() => {
+        fetchRoute();
+       },[])
 
-     const fetchRoute = async (destino) => {
-        console.log("destino: ", destino);
+     const fetchRoute = async () => {
+        console.log('paso 1', location)
         if(!location) return;
+         console.log('paso 2', location)
         setLoadingRoute(true)
-        setRouteCoords(null);
+        setVets([]);
+    
 
         const originStr = `${location.latitude},${location.longitude}`
-        const destStr = `${destino.latitude},${destino.longitude}`
 
-        const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${originStr}&destination=${destStr}&mode=walking&key=${GOOGLE_MAPS_APIKEY}`;
-        
+        const url = `https://api.geoapify.com/v2/geocode/reverse?lat=${location.latitude}&lon=${location.longitude}&apiKey=${GEO_API_KEY} `;
+       
         try {
-            const resp = await fetch(url)
+            const resp = await fetch(url, "GET")
             const data = await resp.json();
-            if(data.routes && data.routes.length){
-               const points =  decodePolyline(data.routes[0].overview_polyline.points)
-               console.log("decodePolyline: ", points);
-               setRouteCoords(points)
-            }
+            setVets(data.features)
+            // console.log('data', data)
+            // if(data.routes && data.routes.length){
+            //    const points =  decodePolyline(data.routes[0].overview_polyline.points)
+            //    setRouteCoords(points)
+            // }
             
         } catch (error) {
-            setErrorMsg('Error al trazar la ruta')
+            setErrorMsg('Fallo en generar la ruta')
         }
         setLoadingRoute(false)
         setSelectedRoute(false)
@@ -161,7 +201,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
         }).start(() => {
           setModalVisible(false)
           setSelectedRoute(null)
-          setRouteCoords(null)
+          setVets(null)
         })
     }
 
@@ -179,25 +219,28 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
               latitudeDelta : 0.05,
               longitudeDelta : 0.05
             }}
+          
+          disabled={loadingRoute}
           showsUserLocation
           showsCompass              
           onRegionChangeComplete={setMapRegion}
           >
+          {vets.map((v, i) => (
+        <Marker
+          key={i}
+          coordinate={{
+            latitude: v.properties.lat,
+            longitude: v.properties.lon
+          }}
+          title={v.properties.name}
+          description={v.properties.formatted}
+        />
+      ))
+    }
           {
-          veterinarias.map((veterinaria) => (
-                <Marker
-            key={veterinaria.id}
-            coordinate={veterinaria.coordenadas}
-            onPress = {() => abrirVeterinaria(veterinaria)}
-            image={require('../../../assets/veterinaria.png')}
-
-               />
-            ))
-          }
-          {
-              routeCoords && (
+              vets && (
               <Polyline
-              coordinates= {routeCoords}
+              coordinates= {vets}
               strokeColor= '#0077AFF'
               stokeWidht={5}
               />
@@ -215,7 +258,7 @@ const GOOGLE_MAPS_APIKEY = 'AIzaSyA5_igLeSHGtZ5Z0vj1Ilib7d7s93C3buU';
         </Pressable> 
          
         <Pressable style={styles.alignButton} onPress={alingNorth}>
-        <Image source={require('../../../assets/icon.png')}
+        <Image source={require('../../../assets/descargar.png')}
          style={{width: 32, height: 32}}
         resizeMode='contain'/>
         </Pressable>
