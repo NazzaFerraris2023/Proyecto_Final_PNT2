@@ -13,6 +13,10 @@
     "@expo/ui": "~0.1.1-alpha.9",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
+<<<<<<< HEAD
+=======
+    "@react-native-community/datetimepicker": "^8.4.2",
+>>>>>>> 1d757d55d6f5b778c5a678dc94c7da14d64df7ed
     "@react-native-picker/picker": "^2.11.1",
     "expo": "~53.0.9",
     "expo-constants": "~17.1.6",
