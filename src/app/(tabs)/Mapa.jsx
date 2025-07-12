@@ -1,64 +1,62 @@
-  import React, { useEffect, useRef, useState } from 'react'
-  import { ActivityIndicator, Animated, Easing, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-  import MapView, { Marker, Polyline } from 'react-native-maps'
-  import * as Location from 'expo-location';
-
-
-
-  
-
+import React, { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, Animated, Easing, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import MapView, { Marker, Polyline } from 'react-native-maps'
+import * as Location from 'expo-location';
 
 const GEO_API_KEY = '490f91cd29304c21bc363c0e5896385e';
 
-  export default function Mapa() {
-  const [location, setLocation] = useState(null)
-  const [loadingRoute, setLoadingRoute] = useState(null)
-  const [selectedRoute, setSelectedRoute] =useState(null)
-  const [vets, setVets] = useState([])
-  const [mapRegion, setMapRegion] = useState(null)
-  const [modalVisible, setModalVisible] = useState(null)
-  const [errorMsg, setErrorMsg] = useState(null)
-
-
-
-  const mapRef = useRef(null)
-
-  const fadeAnim = useRef(new Animated.Value(0)).current
+export default function Mapa() {
+  const [location, setLocation] = useState(null);
+  const [loadingRoute, setLoadingRoute] = useState(null);
+  const [selectedRoute, setSelectedRoute] =useState(null);
+  const [vets, setVets] = useState([]);
+  const [mapRegion, setMapRegion] = useState(null);
+  const [modalVisible, setModalVisible] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const mapRef = useRef(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const cargarLocation  = async () => {
       let {status} = await Location.requestForegroundPermissionsAsync();
 
       if(status !== 'granted'){
-        setErrorMsg('NO se permite la ubicacion')
+        setErrorMsg('No se permite la ubicacion')
         return;
       }
-      let locacion = await Location.getCurrentPositionAsync()
-      setLocation(locacion.coords)
+      let locacion = await Location.getCurrentPositionAsync();
+      setLocation(locacion.coords);
       setMapRegion({
         latitude : locacion.coords.latitude,
         longitude : locacion.coords.longitude,
         latitudeDelta : 0.05,
         longitudeDelta : 0.05,
-      })
+      });
     }
-    cargarLocation()
-   
+
+    const cargarVeterinarias = async () => {
+      let resp = await fetch(`https://api.geoapify.com/v2/places?categories=pet.veterinary&filter=circle:${location.longitude},${location.latitude},5000&bias=proximity:${location.longitude},${location.latitude}&limit=20&apiKey=${GEO_API_KEY}`);
+      let json = await resp.json();
+      setVets(json.features);
+    }
+    
+    cargarLocation();
+    cargarVeterinarias();
   },[])
 
 
 
 
-    useEffect(() =>{
-      if(modalVisible){
-         Animated.timing(fadeAnim,{
-          toValue: 1,
-          duration: 230,
-          useNativeDriver: true,
-          easing: Easing.out(Easing.ease),
-            }).start()
-        }
-    },[modalVisible])
+  useEffect(() =>{
+    if(modalVisible){
+       Animated.timing(fadeAnim,{
+        toValue: 1,
+        duration: 230,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.ease),
+          }).start()
+      }
+  },[modalVisible])
 
    const alingNorth = () => {
     if(mapRef.current && mapRegion){
@@ -75,39 +73,22 @@ const GEO_API_KEY = '490f91cd29304c21bc363c0e5896385e';
 
 
 
-    const centrarUser = () => {
-      if(mapRef.current && location){
-        mapRef.current.animateToRegion({
-        latitude : location.latitude,
-        longitude : location.longitude,
-        latitudeDelta : 0.05,
-        longitudeDelta : 0.05,
-        })
-      }
+  const centrarUser = () => {
+    if(mapRef.current && location){
+      mapRef.current.animateToRegion({
+      latitude : location.latitude,
+      longitude : location.longitude,
+      latitudeDelta : 0.05,
+      longitudeDelta : 0.05,
+      })
     }
-       useEffect(() => {
-         const cargarVeterinarias = async () => {
-    
-      
-      const url =  `https://api.geoapify.com/v2/places?categories=pet.veterinary&filter=circle:${location.longitude},${location.latitude},5000&bias=proximity:${location.longitude},${location.latitude}&limit=20&apiKey=${GEO_API_KEY}`;
-     
-      let resp = await fetch(url)
-      let json = await resp.json()
-   
-      setVets(json.features)
-    }
-    
-    cargarVeterinarias()
-
-  }, []);
-
-
+  }
 
     const abrirVeterinaria = (veterinaria) =>{
-      setSelectedRoute(veterinaria)
-      setModalVisible(true)
-
+      setSelectedRoute(veterinaria);
+      setModalVisible(true);
     }
+
     const handleClose = () =>{
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -120,8 +101,6 @@ const GEO_API_KEY = '490f91cd29304c21bc363c0e5896385e';
           setVets(null)
         })
     }
-
-
 
     return (
       <View style = {styles.container}>
