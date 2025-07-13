@@ -25,6 +25,7 @@ export default function Mapa() {
         return;
       }
       let locacion = await Location.getCurrentPositionAsync();
+      setTimeout(() =>  { 
       setLocation(locacion.coords);
       setMapRegion({
         latitude : locacion.coords.latitude,
@@ -32,17 +33,23 @@ export default function Mapa() {
         latitudeDelta : 0.05,
         longitudeDelta : 0.05,
       });
+      },1000)
     }
+      cargarLocation();
+      console.log('ubicacion: ',location)
+     },[])
 
+
+
+  useEffect(()=> {
     const cargarVeterinarias = async () => {
       let resp = await fetch(`https://api.geoapify.com/v2/places?categories=pet.veterinary&filter=circle:${location.longitude},${location.latitude},5000&bias=proximity:${location.longitude},${location.latitude}&limit=20&apiKey=${GEO_API_KEY}`);
       let json = await resp.json();
       setVets(json.features);
+      
     }
-    
-    cargarLocation();
     cargarVeterinarias();
-  },[])
+  },[location])
 
 
 
