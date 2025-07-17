@@ -70,13 +70,7 @@ export default function Turnos() {
     setEditando(true);
   };
 
-  //despues del cambio de fecha
-  const onChangeDate = (event, selectedDate) => {
-    setShowDatePicker (false);
-    if (selectedDate) {
-      setForm ({ ...form, fechaTurno: selectedDate.toISOString()})
-    }
-  }
+
 
   return (
     <View style={styles.container}>

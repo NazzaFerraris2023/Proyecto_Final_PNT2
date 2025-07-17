@@ -5,12 +5,7 @@ import { useFocusEffect } from 'expo-router';
 
 export default function ProximoTurno() {
   const {user} =  useAuth();
-  const [turno, setTurno] = useState({
-    fechaTurno: 0,
-    especialidad: "",
-    nombreMascota: "",
-    name: "",
-  });
+
   const [turnos, setTurnos] = useState([]);
 
   const fetchTurnos = async () => {
@@ -23,9 +18,7 @@ export default function ProximoTurno() {
     }
   };
 
-  useEffect(() => {
-    fetchTurnos();
-  }, []);
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -33,7 +26,7 @@ export default function ProximoTurno() {
     }, [])
   );
 
-  //conseguir date mas chico, 
+  //conseguir date mas cercano a la fecha de hoy, sin ser una fecha pasada.
   const proximoTurno = () => {
 
     const turnosUsuario = turnos.filter((turno) => turno.name == user?.name);
